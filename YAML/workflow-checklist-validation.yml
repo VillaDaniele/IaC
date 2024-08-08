@@ -1,0 +1,42 @@
+name: "Checklist Validation"
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  validate-checklist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current code
+        uses: actions/checkout@v4
+
+      - name: Validate checklist
+        id: validate_checklist
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const prData = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+            const description = prData.data.body;
+            
+            if (description === undefined || description === null || !description.includes('## Pull Request Checklist')) {
+              console.log("No checklist added yet");
+              return;
+            }
+            
+            const markedBoxes = description.match(/(- \[[x]\].+)/g);
+            const unmarkedBoxes = description.match(/(- \[[ ]\].+)/g);
+            
+            if (unmarkedBoxes !== null) {
+              core.setFailed("There are some uncompleted tasks!");
+            } else if (markedBoxes !== null) {
+              console.log("All tasks finished!");
+            } else {
+              core.setFailed("Checklist status is pending.");
+            }
+        env:
+          GITHUB_TOKEN: ###
