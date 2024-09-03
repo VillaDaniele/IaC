@@ -49,7 +49,7 @@ jobs:
             Deployment info:
               - HostPool: ${{inputs.hostpool}}
               - Sequential number: ${{inputs.initial_number}}
-              - N. of VMs to be deployed: ${{inputs.sessionhost_count}
+              - N. of VMs to be deployed: ${{inputs.sessionhost_count}}
             "
 
   # deploy-script:
