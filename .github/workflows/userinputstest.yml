@@ -37,6 +37,7 @@ jobs:
         timeout-minutes: 10
         with:
           approvers: VillaDaniele
+          secret: ${{ github.TOKEN }}
           minimum-approvals: 1
           issue-title: Deploy new AVD Session hosts
           issue-body: |
