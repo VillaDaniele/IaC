@@ -6,8 +6,8 @@ on:
       hostpool:
         description: "Name of the HostPool to update."
         required: true
-        type: multiselect
-        items:
+        type: choice
+        options:
           - AVD-HP-P-IT
           - AVD-HP-P-BI-INT
           - AVD-HP-P-BI-EXT
@@ -16,12 +16,12 @@ on:
       initial_number:
         description: "Please check the last VM number, and type the next in sequence. If it is the first VM, please type 0."
         required: true
-        type: int
+        type: number
 
       sessionhost_count:
         description: "How many VMs to be deployed?"
         required: true
-        type: int
+        type: number
 
       localadmin_psw:
         description: "The password for the local admin 'adm_avd'."
