@@ -23,16 +23,10 @@ on:
         required: true
         type: number
 
-      localadmin_psw:
-        description: "The password for the local admin 'adm_avd'."
-        required: true
-        type: password
-
 env:
   avdhostpool: ${{inputs.hostpool}}
   initialnumber: ${{inputs.initial_number}}
   sessionhostcount: ${{inputs.sessionhost_count}}
-  adminpsw: ${{inputs.localadmin_psw}}
 
 jobs:
   get-approval:
@@ -42,6 +36,7 @@ jobs:
         uses: trstringer/manual-approval@v1
         timeout-minutes: 10
         with:
+          approvers: VillaDaniele
           minimum-approvals: 1
           issue-title: Deploy new AVD Session hosts
           issue-body: |
