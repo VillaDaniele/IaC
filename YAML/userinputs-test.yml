@@ -1,0 +1,72 @@
+name: Deploy new AVD Session Host
+
+on:
+  workflow_dispatch:
+    inputs:
+      hostpool:
+        description: "Name of the HostPool to update."
+        required: true
+        type: multiselect
+        items:
+          - AVD-HP-P-IT
+          - AVD-HP-P-BI-INT
+          - AVD-HP-P-BI-EXT
+          - AVD-HP-M-VALENV
+
+      initial_number:
+        description: "Please check the last VM number, and type the next in sequence. If it is the first VM, please type 0."
+        required: true
+        type: int
+
+      sessionhost_count:
+        description: "How many VMs to be deployed?"
+        required: true
+        type: int
+
+      localadmin_psw:
+        description: "The password for the local admin 'adm_avd'."
+        required: true
+        type: password
+
+env:
+  avdhostpool: ${{inputs.hostpool}}
+  initialnumber: ${{inputs.initial_number}}
+  sessionhostcount: ${{inputs.sessionhost_count}}
+  adminpsw: ${{inputs.localadmin_psw}}
+
+jobs:
+  get-approval:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Approval
+        uses: trstringer/manual-approval@v1
+        timeout-minutes: 10
+        with:
+          minimum-approvals: 1
+          issue-title: Deploy new AVD Session hosts
+          issue-body: |
+            "Please review the requested deployment, and approve or deny.
+            Deployment info:
+              - HostPool: ${{inputs.hostpool}}
+              - Sequential number: ${{inputs.initial_number}}
+              - N. of VMs to be deployed: ${{inputs.sessionhost_count}
+            "
+
+  # deploy-script:
+  #   runs-on: ubuntu-latest
+  #   needs: get-approval
+  #   environment: prod
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+
+  #     - name: Login via AZ module
+  #       uses: azure/login@v2
+  #       with:
+  #         creds: '{"clientId": "${{ secrets.ARM_CLIENT_ID }}", "clientSecret": "${{ secrets.ARM_CLIENT_SECRET }}", "subscriptionId": "${{ secrets.ARM_SUBSCRIPTION_ID }}", "tenantId": "${{ secrets.ARM_TENANT_ID }}"}'
+  #         enable-AzPSSession: true
+
+  #     - name: Run PowerShell script
+  #       shell: pwsh
+  #       run: |
+  #         ./psscript/azure-avdsessionhost.ps1
